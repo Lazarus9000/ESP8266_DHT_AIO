@@ -29,7 +29,7 @@ AdafruitIO_Feed *temp = io.feed("loft.temp");
 AdafruitIO_Feed *avgtemp = io.feed("loft.avgtemp");
 AdafruitIO_Feed *mediantemp = io.feed("loft.mediantemp");
 AdafruitIO_Feed *hum = io.feed("loft.hum");
-AdafruitIO_Feed *heater = io.feed("loft.Heater");
+AdafruitIO_Feed *heater = io.feed("loft.heater");
 AdafruitIO_Feed *plug = io.feed("loft.plug");
 int heaterstate = 0;
 
@@ -48,6 +48,8 @@ uint32_t delayMS;
 
 
 void setup() {
+
+  pinMode(BUILTIN_LED, OUTPUT);
 
   // start the serial connection
   Serial.begin(115200);
@@ -121,6 +123,7 @@ void loop() {
   MedianFilter mediantempvar(nine, 0);
 
   for (int i = 0; i <= iterations; i++) {
+    io.run();
     // Delay between measurements.
     delay(delayMS);
     // Get temperature event and print its value.
