@@ -105,21 +105,32 @@ void loop() {
   // io.adafruit.com, and processes any incoming data.
   io.run();
 
-  // Delay between measurements.
-  delay(delayMS);
-  // Get temperature event and print its value.
-  sensors_event_t event;  
-  dht.temperature().getEvent(&event);
-  if (isnan(event.temperature)) {
-    Serial.println("Error reading temperature!");
-    //temp->save(0);
+  float avgtemp = 0;
+  float iterations = 10;
+  float count = 0;
+  for (int i=0; i <= iterations; i++){
+      
+    // Delay between measurements.
+    delay(delayMS);
+    // Get temperature event and print its value.
+    sensors_event_t event;  
+    dht.temperature().getEvent(&event);
+    
+    
+    if (isnan(event.temperature)) {
+      Serial.println("Error reading temperature!");
+      //temp->save(0);
+    }
+    else {
+      Serial.print("Temperature: ");
+      Serial.print(event.temperature);
+      Serial.println(" *C");
+      avgtemp += event.temperature;
+      count++;
+    }
   }
-  else {
-    Serial.print("Temperature: ");
-    Serial.print(event.temperature);
-    Serial.println(" *C");
-    temp->save(event.temperature);
-  }
+  avgtemp = avgtemp/count;
+  temp->save(avgtemp);
 
   dht.humidity().getEvent(&event);
   if (isnan(event.relative_humidity)) {
@@ -131,10 +142,6 @@ void loop() {
     Serial.println("%");
     hum->save(event.relative_humidity);
   }
-
-  // Delay between measurements.
-  delay(delayMS*10);
-  
 
 }
 
