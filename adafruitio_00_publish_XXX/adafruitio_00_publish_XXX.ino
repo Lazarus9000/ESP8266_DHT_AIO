@@ -25,6 +25,8 @@ int count = 0;
 // set up the feeds
 AdafruitIO_Feed *temp = io.feed("loft.temp");
 AdafruitIO_Feed *hum = io.feed("loft.hum");
+AdafruitIO_Feed *heater = io.feed("loft.Heater");
+
 
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -51,6 +53,9 @@ void setup() {
 
   // connect to io.adafruit.com
   io.connect();
+
+  //Set up handler for heater control
+  heater->onMessage(handleMessage);
 
   // wait for a connection
   while(io.status() < AIO_CONNECTED) {
@@ -131,4 +136,21 @@ void loop() {
   delay(delayMS*10);
   
 
+}
+
+// this function is called whenever an 'digital' feed message
+// is received from Adafruit IO. it was attached to
+// the 'digital' feed in the setup() function above.
+void handleMessage(AdafruitIO_Data *data) {
+ 
+  Serial.print("received <- ");
+ 
+  if(data->toPinLevel() == HIGH)
+    Serial.println("HIGH");
+  else
+    Serial.println("LOW");
+ 
+  // write the current state to the led
+  digitalWrite(BUILTIN_LED, data->toPinLevel());
+ 
 }
