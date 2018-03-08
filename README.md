@@ -1,11 +1,13 @@
 # ESP8266_DHT_AIO
 ESP8266 core project reading temp and humidity from DHT11 and posting to AdafruitIO<br><br>
-Todo<br>
+Todo, prioritized<br>
 Implement filtering - Done<br>
-OTA update<br>
+Get plug value at boot<br>
 Hue integration<br>
-Connect to multiple networks<br>
 Temperature 'calibration' from cloud<br>
+OTA update<br>
+Investigate reboots happening ~15 minutes<br>
+Connect to multiple networks<br>
 <br>
 <br>
 For removing 'particle' from oaks. Not sure if this step is entirely necessary?<br><br>
