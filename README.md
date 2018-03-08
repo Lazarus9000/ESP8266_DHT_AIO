@@ -35,3 +35,6 @@ HTTPClient http;<br>
   Serial.println(httpCode);<br>
   http.writeToStream(&Serial);<br>
   http.end();<br>
+<br><br>
+Maybe exit quotes instead of single quotes?<br>
+client.println("{\"on\":false}");
