@@ -5,7 +5,7 @@ Implement filtering - Done<br>
 OTA update<br>
 Hue integration<br>
 Connect to multiple networks<br>
-Temperature calibration<br>
+Temperature 'calibration' from cloud<br>
 
 
 
