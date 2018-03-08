@@ -1,5 +1,11 @@
 # ESP8266_DHT_AIO
-ESP8266 core project reading temp and humidity from DHT11 and posting to AdafruitIO
+ESP8266 core project reading temp and humidity from DHT11 and posting to AdafruitIO<br><br>
+Todo<br>
+Implement filtering - Done<br>
+OTA update<br>
+Hue integration<br>
+
+
 
 
 For removing 'particle' from oaks. Not sure if this step is entirely necessary?
