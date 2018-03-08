@@ -6,25 +6,19 @@ OTA update<br>
 Hue integration<br>
 Connect to multiple networks<br>
 Temperature 'calibration' from cloud<br>
+<br>
+<br>
+For removing 'particle' from oaks. Not sure if this step is entirely necessary?<br><br>
 
-
-
-For removing 'particle' from oaks. Not sure if this step is entirely necessary?
-
-C:\Python27\Scripts>esptool.exe --port COM3 --baud 115200 erase_flash
-
-
-esptool.py v2.3.1
-
-Connecting........_____....._____....._____....._____....._____....._____....._____....._____....._____...
-
-Detecting chip type... ESP8266
-
-Chip is ESP8266EX
-Features: WiFi
-Uploading stub...
-Running stub...
-Stub running...
-Erasing flash (this may take a while)...
-Chip erase completed successfully in 8.5s
-Hard resetting via RTS pin...
+C:\Python27\Scripts>esptool.exe --port COM3 --baud 115200 erase_flash<br>
+esptool.py v2.3.1<br>
+Connecting........_____....._____....._____....._____....._____....._____....._____....._____....._____...<br>
+Detecting chip type... ESP8266<br>
+Chip is ESP8266EX<br>
+Features: WiFi<br>
+Uploading stub...<br>
+Running stub...<br>
+Stub running...<br>
+Erasing flash (this may take a while)...<br>
+Chip erase completed successfully in 8.5s<br>
+Hard resetting via RTS pin...<br>
