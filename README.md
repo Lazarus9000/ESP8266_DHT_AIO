@@ -27,17 +27,3 @@ Stub running...<br>
 Erasing flash (this may take a while)...<br>
 Chip erase completed successfully in 8.5s<br>
 Hard resetting via RTS pin...<br>
-
-<b>put request, not tested</b><br>
-HTTPClient http;<br>
-  http.begin("https://pushalot.com/api/sendmessage");<br>
-  http.addHeader("Content-Type", "application/json");<br>
-  String postMessage = String("{'AuthorizationToken' : 'yourapistring here', 'Title' : 'Test', 'Body' : 'Test'}");<br>
-  int httpCode = http.PUT(postMessage);<br>
-  Serial.print("http result:");<br>
-  Serial.println(httpCode);<br>
-  http.writeToStream(&Serial);<br>
-  http.end();<br>
-<br><br>
-Maybe exit quotes instead of single quotes?<br>
-client.println("{\"on\":false}");
