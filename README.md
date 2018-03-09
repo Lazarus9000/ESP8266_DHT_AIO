@@ -2,11 +2,12 @@
 ESP8266 core project reading temp and humidity from DHT11 and posting to AdafruitIO<br><br>
 Todo, prioritized<br>
 
- * Implement filtering - Done
- * Hue integration
-   * Get plug value at boot
+ * ~~Implement filtering~~
+ * ~~Hue integration~~
+   * ~~Get plug value at boot~~
  * Temperature 'calibration' from cloud
  * OTA update
+ * Select filter from cloud (raw, mean or median, reduce amount of feeds needed)
  * Investigate reboots happening ~15 minutes
  * Connect to multiple networks
 
