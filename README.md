@@ -4,7 +4,7 @@ Todo, prioritized<br>
 
  * Implement filtering - Done
  * Hue integration
-  * Get plug value at boot
+   * Get plug value at boot
  * Temperature 'calibration' from cloud
  * OTA update
  * Investigate reboots happening ~15 minutes
