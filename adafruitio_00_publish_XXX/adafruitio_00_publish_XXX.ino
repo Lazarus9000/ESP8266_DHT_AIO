@@ -1,14 +1,4 @@
-// Adafruit IO Publish Example
-//
-// Adafruit invests time and resources providing this open source code.
-// Please support Adafruit and open source hardware by purchasing
-// products from Adafruit!
-//
-// Written by Todd Treece for Adafruit Industries
-// Copyright (c) 2016 Adafruit Industries
-// Licensed under the MIT license.
-//
-// All text above must be included in any redistribution.
+// ESP8266 to Adafruit IO and back
 
 /************************** Configuration ***********************************/
 
@@ -33,6 +23,7 @@ AdafruitIO_Feed *heater = io.feed("loft.heater");
 AdafruitIO_Feed *plug = io.feed("loft.plug");
 int heaterstate = 0;
 
+#include <ESP8266WiFi.h>
 
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -47,6 +38,12 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 uint32_t delayMS;
 
 
+String hue_on = "{\"on\":true}";
+String hue_off = "{\"on\":false}";
+String light = "2";
+const char* bridge_ip = "192.168.1.181";
+
+  
 void setup() {
 
   pinMode(BUILTIN_LED, OUTPUT);
@@ -103,6 +100,8 @@ void setup() {
   // Set delay between sensor readings based on sensor details.
   delayMS = sensor.min_delay / 1000;
 
+  
+
 }
 
 void loop() {
@@ -153,6 +152,8 @@ void loop() {
   //Calc avgtemp
   avgtempvar = avgtempvar / count;
 
+// Based on https://learn.adafruit.com/adafruit-io-basics-temperature-and-humidity/code
+
   //Send avgtemp to cloud
   avgtemp->save(avgtempvar);
 
@@ -171,9 +172,12 @@ void loop() {
     hum->save(event.relative_humidity);
   }
 
+  setplug();
   plug->save(heaterstate);
 
 }
+
+//From https://learn.adafruit.com/adafruit-io-basics-digital-output/code
 
 // this function is called whenever an 'digital' feed message
 // is received from Adafruit IO. it was attached to
@@ -184,11 +188,13 @@ void handleMessage(AdafruitIO_Data *data) {
 
   if (data->toPinLevel() == HIGH) {
     Serial.println("HIGH");
-    heaterstate=30;
+    togglehueswitch(true);
+    //heaterstate=30;
     //plug->save(30);
   } else {
     Serial.println("LOW");
-    heaterstate=0;
+    togglehueswitch(false);
+    //heaterstate=0;
     //plug->save(0);
   }
 
@@ -196,3 +202,76 @@ void handleMessage(AdafruitIO_Data *data) {
   digitalWrite(BUILTIN_LED, data->toPinLevel());
 
 }
+
+// Hue calls found here 
+// http://www.esp8266.com/viewtopic.php?f=11&t=4389
+// https://arduino.stackexchange.com/questions/21256/connecting-arduino-with-philips-hue
+
+void togglehueswitch(bool toggle) {
+  String command = "";
+  if(toggle) {
+    command = hue_on;
+  } else {
+    command = hue_off;
+  }
+
+  WiFiClient client;
+  if (!client.connect(bridge_ip, 80)) {
+    Serial.println("Connection failed");
+    return;
+  }
+  client.println("PUT /api/" + hueuser + "/lights/" + light + "/state");
+  client.println("Host: " + String(bridge_ip) + ":80");
+  client.println("User-Agent: ESP8266/1.0");
+  client.println("Connection: close");
+  client.println("Content-type: text/xml; charset=\"utf-8\"");
+  client.print("Content-Length: ");
+  client.println(command.length()); // PUT COMMAND HERE
+  client.println();
+  client.println(command); // PUT COMMAND HERE
+  client.flush();
+  client.stop();
+}
+
+bool gethuestatus(String light) {
+  bool status = false;
+
+  WiFiClient client;
+
+  if (client.connect(bridge_ip, 80)) {
+    client.println("GET /api/" + hueuser + "/lights/" + light);
+    client.println("Host: " + String(bridge_ip) + ":80");
+    client.println("User-Agent: ESP8266/1.0");
+    client.println("Content-type: text/xml; charset=\"utf-8\"");
+    client.println(F("Content-type: application/json"));
+
+    //client.println("Connection: close"); ??
+    client.println(F("Connection: keep-alive"));
+    
+    while (client.connected())
+      {
+        if (client.available())
+        {
+          client.findUntil("\"on\":", "\0");
+          String lampstate = client.readStringUntil(',');
+          Serial.println(lampstate);
+          status = (lampstate == "true");
+          //String line = client.readStringUntil('\n');
+          //Serial.println(line);
+          break;
+        }
+      }
+    client.flush();  
+    client.stop();
+  }
+  return status;
+}
+
+void setplug() {
+  if(gethuestatus("2")) {
+    heaterstate=30;
+  } else {
+    heaterstate=0;
+  }
+}
+
