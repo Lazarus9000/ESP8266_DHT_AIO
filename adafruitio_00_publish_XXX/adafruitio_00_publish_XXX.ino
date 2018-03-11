@@ -5,7 +5,7 @@
 // edit the config.h tab and enter your Adafruit IO credentials
 // and any additional configuration needed for WiFi, cellular,
 // or ethernet clients.
-#include "config.h"
+#include "config.h"k
 
 #include <MedianFilter.h>
 
@@ -185,7 +185,7 @@ void loop() {
 void handleMessage(AdafruitIO_Data *data) {
 
   Serial.print("received <- ");
-
+  Serial.println(data->toString());
   if (data->toPinLevel() == HIGH) {
     Serial.println("HIGH");
     togglehueswitch(true);
@@ -200,7 +200,7 @@ void handleMessage(AdafruitIO_Data *data) {
 
   // write the current state to the led
   digitalWrite(BUILTIN_LED, data->toPinLevel());
-
+  Serial.println("End of handle message");
 }
 
 // Hue calls found here 
@@ -215,6 +215,7 @@ void togglehueswitch(bool toggle) {
     command = hue_off;
   }
 
+  Serial.println("Posting hue command " + command);
   WiFiClient client;
   if (!client.connect(bridge_ip, 80)) {
     Serial.println("Connection failed");
@@ -238,6 +239,7 @@ bool gethuestatus(String light) {
 
   WiFiClient client;
 
+  Serial.println("Making http request");
   if (client.connect(bridge_ip, 80)) {
     client.println("GET /api/" + hueuser + "/lights/" + light);
     client.println("Host: " + String(bridge_ip) + ":80");
@@ -245,29 +247,40 @@ bool gethuestatus(String light) {
     client.println("Content-type: text/xml; charset=\"utf-8\"");
     client.println(F("Content-type: application/json"));
 
-    //client.println("Connection: close"); ??
-    client.println(F("Connection: keep-alive"));
-    
+    client.println("Connection: close"); 
+    //client.println(F("Connection: keep-alive"));
+    Serial.println("GETing hue status");
     while (client.connected())
       {
         if (client.available())
         {
+          Serial.println("searching for on");
           client.findUntil("\"on\":", "\0");
           String lampstate = client.readStringUntil(',');
           Serial.println(lampstate);
           status = (lampstate == "true");
+          Serial.println("Searching for reachable");
+          client.findUntil("\"reachable\":", "\0");
+          String reachable = client.readStringUntil(',');
+          Serial.println(reachable);
+          bool reach = (reachable == "true");
+          status = (status && reach);
+          
           //String line = client.readStringUntil('\n');
           //Serial.println(line);
           break;
         }
       }
+    Serial.println("closing down client");
     client.flush();  
     client.stop();
   }
+  Serial.println("Hue status: " + status);
   return status;
 }
 
 void setplug() {
+  Serial.println("Getting hue status");
   if(gethuestatus("2")) {
     heaterstate=30;
   } else {
