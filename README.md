@@ -2,11 +2,12 @@
 ESP8266 core project reading temp and humidity from DHT11 and posting to AdafruitIO<br><br>
 Todo, prioritized<br>
 
- * Implement filtering - Done
- * Hue integration
-   * Get plug value at boot
+ * ~~Implement filtering~~
+ * ~~Hue integration~~
+   * ~~Get plug value at boot~~
  * Temperature 'calibration' from cloud
  * OTA update
+ * Select filter from cloud (raw, mean or median, reduce amount of feeds needed)
  * Investigate reboots happening ~15 minutes
  * Connect to multiple networks
 
@@ -26,17 +27,3 @@ Stub running...<br>
 Erasing flash (this may take a while)...<br>
 Chip erase completed successfully in 8.5s<br>
 Hard resetting via RTS pin...<br>
-
-<b>put request, not tested</b><br>
-HTTPClient http;<br>
-  http.begin("https://pushalot.com/api/sendmessage");<br>
-  http.addHeader("Content-Type", "application/json");<br>
-  String postMessage = String("{'AuthorizationToken' : 'yourapistring here', 'Title' : 'Test', 'Body' : 'Test'}");<br>
-  int httpCode = http.PUT(postMessage);<br>
-  Serial.print("http result:");<br>
-  Serial.println(httpCode);<br>
-  http.writeToStream(&Serial);<br>
-  http.end();<br>
-<br><br>
-Maybe exit quotes instead of single quotes?<br>
-client.println("{\"on\":false}");
