@@ -40,7 +40,7 @@ uint32_t delayMS;
 
 String hue_on = "{\"on\":true}";
 String hue_off = "{\"on\":false}";
-String light = "2";
+String light = "3";
 const char* bridge_ip = "192.168.1.181";
 
   
@@ -60,7 +60,7 @@ void setup() {
   io.connect();
 
   //Set up handler for heater control
-  heater->onMessage(handleMessage);
+  //heater->onMessage(handleMessage);
 
   // wait for a connection
   while (io.status() < AIO_CONNECTED) {
@@ -216,22 +216,22 @@ void togglehueswitch(bool toggle) {
   }
 
   Serial.println("Posting hue command " + command);
-  WiFiClient client;
-  if (!client.connect(bridge_ip, 80)) {
+  WiFiClient putclient;
+  if (!putclient.connect(bridge_ip, 80)) {
     Serial.println("Connection failed");
     return;
   }
-  client.println("PUT /api/" + hueuser + "/lights/" + light + "/state");
-  client.println("Host: " + String(bridge_ip) + ":80");
-  client.println("User-Agent: ESP8266/1.0");
-  client.println("Connection: close");
-  client.println("Content-type: text/xml; charset=\"utf-8\"");
-  client.print("Content-Length: ");
-  client.println(command.length()); // PUT COMMAND HERE
-  client.println();
-  client.println(command); // PUT COMMAND HERE
-  client.flush();
-  client.stop();
+  putclient.println("PUT /api/" + hueuser + "/lights/" + light + "/state");
+  putclient.println("Host: " + String(bridge_ip) + ":80");
+  putclient.println("User-Agent: ESP8266/1.0");
+  putclient.println("Connection: close");
+  putclient.println("Content-type: text/xml; charset=\"utf-8\"");
+  putclient.print("Content-Length: ");
+  putclient.println(command.length()); // PUT COMMAND HERE
+  putclient.println();
+  putclient.println(command); // PUT COMMAND HERE
+  putclient.flush();
+  putclient.stop();
 }
 
 bool gethuestatus(String light) {
@@ -261,7 +261,7 @@ bool gethuestatus(String light) {
           status = (lampstate == "true");
           Serial.println("Searching for reachable");
           client.findUntil("\"reachable\":", "\0");
-          String reachable = client.readStringUntil(',');
+          String reachable = client.readStringUntil('}');
           Serial.println(reachable);
           bool reach = (reachable == "true");
           status = (status && reach);
@@ -281,7 +281,7 @@ bool gethuestatus(String light) {
 
 void setplug() {
   Serial.println("Getting hue status");
-  if(gethuestatus("2")) {
+  if(gethuestatus("3")) {
     heaterstate=30;
   } else {
     heaterstate=0;
